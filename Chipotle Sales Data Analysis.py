@@ -1,36 +1,19 @@
-#!/usr/bin/env python
-# coding: utf-8
-
 # ### Introduction
 
 # *In this dataset, there are 4622 records of Chipotle orders. Each order shows how many quantities the order contained, what were the items of the order, and the total price. Lets do some Data Exploration and see what we can find*
 
 # ### Data Wrangling
 
-# In[1]:
-
-
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-
-# In[66]:
-
-
 pd.set_option('display.max_colwidth', None)
 pd.set_option('display.max_rows', None)
 
-
-# In[2]:
-
-
 df = pd.read_csv('Chipotle Sales.csv')
 df
-
-
-# In[5]:
 
 
 df.info()
@@ -38,14 +21,8 @@ df.info()
 #Need to convert Item_Price into float
 
 
-# In[8]:
-
-
 # After Data Cleaning
 df.info()
-
-
-# In[15]:
 
 
 df.describe()
@@ -55,31 +32,17 @@ df.describe()
 #order price averages around $7.50
 
 
-# In[23]:
-
-
 df[df['Quantity'] >= 5]
 #Someone ordered 15 only chips and Salsa
 #And another person ordered 10 bottles of water
 # will decide in exploratory analysis if these two should be removed
 
-
-# In[26]:
-
-
 df.isna().sum()
 #29% of the data has empty Choice_Description
 
 
-# In[32]:
-
-
 len(df[df.duplicated()])
 #there are 59 duplicate rows
-
-
-# In[40]:
-
 
 #df[df.duplicated()]
 
@@ -90,20 +53,12 @@ df.query('Order_ID == "103" ')
 
 # ### Data Cleaning
 
-# In[12]:
-
 
 df['Order_ID'] = df['Order_ID'].astype(str)
 df['Item_Price'] = df['Item_Price'].replace('[\$,]', '', regex=True).astype(float)
 
 
-# In[41]:
-
-
 df
-
-
-# In[86]:
 
 
 #Create Order_Type column, i.e. is it Bowl, Burrito or Tacos
@@ -121,9 +76,6 @@ df['Order_Type'] = np.where(df['Item_Name'].str.contains('Burrito'), 'Burrito',
 #df
 
 
-# In[94]:
-
-
 #Create Order_Type column, i.e. is it Bowl, Burrito or Tacos
 df['Meat_Type'] = np.where(df['Item_Name'].str.contains('Steak'), 'Steak', 
                    np.where(df['Item_Name'].str.contains('Chicken'), 'Chicken',            
@@ -136,9 +88,6 @@ df['Meat_Type'] = np.where(df['Item_Name'].str.contains('Steak'), 'Steak',
 #df
 
 
-# In[114]:
-
-
 meat = ['Chicken', 'Steak']
 chicken_steak_df = df.query('Meat_Type == "Chicken" or Meat_Type == "Steak" ')
 #Exclude outliers to show the true price distribution >> Back to Data Cleaning exclude those above $15 dollars
@@ -147,9 +96,6 @@ chicken_steak_df = chicken_steak_df.query('Item_Price <= 15.0')
 
 
 # ### Exploratory Data Analysis
-
-# In[53]:
-
 
 # What is Number 1 Item_Name mostly sold?
 item_counts = df['Item_Name'].value_counts().sort_values(ascending=True)
@@ -172,10 +118,6 @@ plt.show()
 #Second question I have is, which meat has most orders: Chicken or Steak or Barbacoa or Carnitas or Veggie. Back to Data Cleaning
 # and also, is one pricer then the other?
 
-
-# In[89]:
-
-
 #to answer above questions, lets do pie graph
 order_type_counts = df['Order_Type'].value_counts()
 
@@ -189,10 +131,6 @@ plt.axis('equal')
 plt.show()
 
 #OK there is equal spread of customers that order bowl and burrito
-
-
-# In[102]:
-
 
 meat_counts = df[df['Meat_Type'] != 'other']['Meat_Type'].value_counts().sort_values(ascending=False)
 
@@ -211,8 +149,6 @@ print(meat_counts)
 #Well, more than half of the orders chicken is ordered, I was expecting steak and chicken to be close but not this much difference between then
 #Now lets see what is the price difference
 
-
-# In[142]:
 
 
 def calculate_quartiles(group):
@@ -233,9 +169,6 @@ plt.show()
 #Steak definitely runs higher price, on average by 50 cents
 
 
-# In[148]:
-
-
 #Lastly I want to know what is the number one Item in Choice_Description. One that is most often in all orders
 
 from wordcloud import WordCloud
@@ -251,10 +184,6 @@ plt.show()
 
 #Tomatoe Salsa, Sour Creak, Black Beans, Fresh Tomatoe amongst the most choices used in the orders
 
-
-# In[146]:
-
-
 # the order with most item_price
 top_expensive_orders = df.sort_values(by='Item_Price', ascending=False).head(5)
 top_expensive_orders
@@ -269,10 +198,6 @@ top_expensive_orders
 # - though the price for Steak runs on average higher by $0.50
 # - Given the available choices: Tomato Salsa, Sour Creak, Black Beans and Fresh Tomato are the top 4 choices
 # - Order_ID 1443 is for 15 items of Chips and Fresh Tomatoe Salsa
-# 
-
-# In[ ]:
-
 
 
 
